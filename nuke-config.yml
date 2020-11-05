@@ -1,0 +1,89 @@
+regions:
+  - "global"
+  - "us-east-1"
+  - "us-east-2"
+  - "1us-west-1"
+  - "us-west-2"
+  - "2us-gov-west-1"
+  - "2us-gov-east-1"
+  - "ca-central-1"
+  - "eu-north-1"
+  - "eu-west-1"
+  - "eu-west-2"
+  - "eu-west-3"
+  - "eu-central-1"
+  - "eu-south-1"
+  - "af-south-1"
+  - "1ap-northeast-1"
+  - "ap-northeast-2"
+  - "4ap-northeast-3"
+  - "ap-southeast-1"
+  - "ap-southeast-2"
+  - "ap-east-1"
+  - "ap-south-1"
+  - "me-south-1"
+  - "1sa-east-1"
+  - "3cn-north-1"
+  - "3cn-northwest-1"
+
+account-blacklist:
+  - "000000000000" # Change this to the account ID of your production account
+  # Optionally add more accounts to the blacklist
+
+accounts:
+    "111111111111": # Change this to the account ID of your testing account
+      filters:
+      # The first 3 filters refer to a "awsnuke" user with an attached policy allowing Admin access
+        IAMUser:
+        - value: awsnuke
+        IAMUserAccessKey:
+        - type: contains
+          value: awsnuke
+        IAMUserPolicyAttachment:
+        - type: contains
+          value: awsnuke
+      # The remainder of the filters allow for SSO access and the standard resources provisioned by AWS Control Tower
+        IAMSAMLProvider: 
+        - type: regex 
+          value: ^arn:aws:iam::\d+:saml-provider/AWSSSO.*
+        IAMRolePolicy:
+        - type: regex
+          value: ^(?i:aws)
+        IAMRolePolicyAttachment:
+        - type: regex
+          value: ^(?i:aws)
+        IAMRole:       
+        - type: regex
+          value: ^(?i:aws)
+        LambdaFunction:
+        - type: contains
+          value: aws-controltower
+        CloudWatchLogsLogGroup:
+        - type: glob
+          value: /aws/**
+        - type: contains
+          value: aws-controltower
+        SNSSubscription:
+        - type: regex
+          value: arn:aws:sns:[\w-]+:\d+:aws-controltower.*
+        SNSTopic:
+        - type: regex
+          value: arn:aws:sns:[\w-]+:\d+:aws-controltower.*
+        CloudTrailTrail:
+        - type: contains
+          value: aws-controltower
+        CloudFormationStack:
+        - type: contains
+          value: AWSControlTower  
+        ConfigServiceConfigurationRecorder:
+        - type: contains
+          value: aws-controltower
+        CloudWatchEventsRule: 
+        - type: contains
+          value: aws-controltower
+        CloudWatchEventsTarget: 
+        - type: contains
+          value: aws-controltower
+        ConfigServiceDeliveryChannel:
+        - type: contains
+          value: aws-controltower

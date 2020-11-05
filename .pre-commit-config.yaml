@@ -1,0 +1,23 @@
+repos:
+    - repo: git://github.com/antonbabenko/pre-commit-terraform
+      rev: v1.39.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+      hooks:
+        - id: terraform_fmt
+        - id: terraform_validate
+        - id: terraform_tflint
+        - id: terraform_docs 
+        - id: checkov
+    - repo: https://github.com/gruntwork-io/pre-commit
+      rev: v0.1.9 # Get the latest from: https://github.com/gruntwork-io/pre-commit/releases
+      hooks:
+        - id: gofmt
+        - id: golint
+    - repo: local
+      hooks:
+        - id: terratest
+          name: terratest
+          description: "Run terratest unit tests"
+          entry: sh -c "cd test; go test -run TestUT_ -count=1 -timeout 30m -tags=unit"
+          language: system
+          files: '\.(tf|go)$'
+          pass_filenames: false

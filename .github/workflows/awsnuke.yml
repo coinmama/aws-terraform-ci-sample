@@ -1,0 +1,27 @@
+# Example workflow for a daily run of aws-nuke
+name: Nightly nuke
+on:
+# Uncomment the following two lines to schedule this job to run daily
+# This runs at 1:00 UTC - change the time to suit your needs
+#    schedule:
+#      - cron: "0 1 * * *"
+    workflow_dispatch:
+      
+jobs:
+    awsnuke:
+        runs-on: ubuntu-latest
+        name: Nuke
+        steps:
+          - name: Authenticate to AWS
+            uses: aws-actions/configure-aws-credentials@v1
+            with:
+                # Set these secrets to credentials to run aws-nuke with
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: us-east-2
+          - name: Checkout
+            uses: actions/checkout@v2
+          - name: Execute aws-nuke
+            uses: coinmama/actions-awsnuke@main
+            with:
+                aws_nuke_config: "nuke-config.yml"

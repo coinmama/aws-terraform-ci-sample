@@ -1,0 +1,61 @@
+# Example workflow for running Terratest
+name: Terratest
+
+on:
+# Uncomment the next two lines to run as CI on every push to the branch "main"
+#  push:
+#    branches: [ main ]
+# Uncomment the next line to run as CI on every pull request, on any branch
+#  pull_request:
+# Uncomment the next two lines to run as a "sanity" CI at 0:00 UTC on the first of every month
+#  schedule:
+#    - cron: "0 0 1 * *" 
+    workflow_dispatch:
+    
+jobs:
+  terratest:
+    name: Terratest
+    runs-on: ubuntu-latest
+    steps:
+      # Install Golang (needed by terratest)
+    - name: Install Go 
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+      id: go
+      # Install gcc (needed by terratest)
+    - name: Install gcc
+      run: "sudo apt-get update && sudo apt-get install -y gcc"
+      # Install gotestsum (for simplifying `go test` output)
+    - name: Setup gotestsum
+      uses: autero1/action-gotestsum@v0.1.0
+      with:
+        gotestsum_version: 0.5.3
+      # Install Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+# Uncomment the next line if you need a CLI token for Terraform Cloud. Remember to define this secret in GitHub.
+#      cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
+      with:
+        terraform_wrapper: false
+        terraform_version: ">= 0.13"
+      # Authenticate to AWS for the rest of the steps
+    - name: Authenticate to AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+      # Checkout the source code.  Run terraform init + validate
+      # This allows us a last opportunity to catch linting errors before running terratest
+    - name: Checkout code 
+      uses: actions/checkout@v2
+    - name: Terraform init
+      run: cd terraform; terraform init
+    - name: Terraform validate
+      run: cd terraform; terraform validate
+      # Run terratest on all test functions starting with "TestIT_".  Restrict to a single process with a 30 minute timeout
+    - name: Run terratest
+      run: "cd test; gotestsum --format standard-verbose -- -run TestIT_ -count=1 -timeout 30m"
+
+      

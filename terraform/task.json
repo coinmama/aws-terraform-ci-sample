@@ -1,0 +1,16 @@
+[
+	{
+		"name":"${svc_name}",
+		"image":"${container}",
+		"cpu":10,
+		"memory":512,
+		"essential":true,
+		"initProcessEnabled": true,
+		"portMappings":[
+		  {
+			"containerPort": ${svc_port},
+			"protocol": "tcp"
+		  }
+		]	
+	}
+]
