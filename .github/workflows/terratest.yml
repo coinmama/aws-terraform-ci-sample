@@ -28,7 +28,7 @@ jobs:
       run: "sudo apt-get update && sudo apt-get install -y gcc"
       # Install gotestsum (for simplifying `go test` output)
     - name: Setup gotestsum
-      uses: autero1/action-gotestsum@v0.1.0
+      uses: autero1/action-gotestsum@v1.0.0
       with:
         gotestsum_version: 0.5.3
       # Install Terraform
