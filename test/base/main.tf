@@ -15,7 +15,7 @@ data "aws_availability_zones" "available" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.50.0"
+  version = "3.0.0"
 
   name = "test.ec2.vpc"
   # Consider moving from Internet Gateway to NAT Gateway?
