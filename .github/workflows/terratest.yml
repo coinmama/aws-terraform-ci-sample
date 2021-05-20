@@ -56,6 +56,6 @@ jobs:
       run: cd terraform; terraform validate
       # Run terratest on all test functions starting with "TestIT_".  Restrict to a single process with a 30 minute timeout
     - name: Run terratest
-      run: "cd test; gotestsum --format standard-verbose -- -run TestIT_ -count=1 -timeout 30m"
+      run: "cd test; go test -run TestIT_ -count=1 -timeout 30m"
 
       
